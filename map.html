@@ -19,7 +19,7 @@
 <script>
 	L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
 	var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
-		.setView([-37.815145,144.966777], 15);
+		.setView([-37.813145,144.966777], 15);
 	
 	map.touchZoom.disable();
 	map.doubleClickZoom.disable();
@@ -31,20 +31,27 @@
 	
 	
 	
-	var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("width", map._size.x).attr("height", map._size.y),
+	var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("width", document.documentElement.clientWidth).attr("height", document.documentElement.clientHeight),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
 	
+	var data = [];
+	d3.csv("prices.csv", function(prices){
+			for (var i = 0; i < prices.length; i++) {
+				  data.push({"coords" : [ parseFloat(prices[i].Latitude), parseFloat(prices[i].Longitude)]});
+				}
 	
-	var data = [
-    { "coords" : [ -37.815145 , 144.966777]},
-    { "coords" : [ -37.811123 , 144.962733]}
-	].map( function(d){ var newPoint = map.latLngToLayerPoint( d.coords ); d.coords = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )
+	/*var data = [
+    { "coords" : [ -37.81786445, 144.9650682]},
+    { "coords" : [ -37.81234347, 144.9566477]}
+	].map( function(d){ var newPoint = map.latLngToLayerPoint( d.coords ); d.coords = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )*/
+	data.map( function(d){ var newPoint = map.latLngToLayerPoint( d.coords ); d.coords = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )
 	
 	g.selectAll("circle").data( data ).enter().append("circle")
     .attr("cx", function(d){ console.log(d); return d.coords.x } )
     .attr("cy", function(d){ return d.coords.y } )
     .attr("r", 10 )
     .style("fill", "red")
+	});
 
 </script>
 </body>
