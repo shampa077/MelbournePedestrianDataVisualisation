@@ -37,10 +37,11 @@ gulp.task('js', () => {
     .on('error', console.error.bind(console))
     .pipe(source('bundle.js'))
     .pipe(gulp.dest('dist'))
+    .pipe(connect.reload());
 })
 
 gulp.task('watch', () => {
-  gulp.watch(config.paths.js, ['js'])
+  gulp.watch(config.paths.js, ['js', ])
 })
 
 gulp.task('default', ['js', 'open', 'watch']);

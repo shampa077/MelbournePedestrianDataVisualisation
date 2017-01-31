@@ -1,8 +1,16 @@
 'use strict';
 
 const Donut = require("./donut");
+const Data = require("./data");
 const jaggedHalfDonut = Donut.jaggedHalfDonut;
 const simpleCircle = Donut.simpleCircle;
+
+
+// Data.readData((data_locs, data_counts) => {
+//   console.log(data_locs)
+//   console.log(data_counts)
+//   console.log("hello")
+// });
 
 // dummy data to print a 'gear', doesn't really matter if min or max array is first
 var maxs = [40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 90, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50];
