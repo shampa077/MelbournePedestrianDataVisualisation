@@ -1,0 +1,29 @@
+{
+  "name": "melbourne_pedestrians",
+  "version": "1.0.0",
+  "description": "SummerViz 2017 Project",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/summerviz/MelbournePedestrians.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/summerviz/MelbournePedestrians/issues"
+  },
+  "homepage": "https://github.com/summerviz/MelbournePedestrians#readme",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "browserify": "^14.0.0",
+    "babelify": "^7.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-connect": "^5.0.0",
+    "gulp-open": "^2.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
