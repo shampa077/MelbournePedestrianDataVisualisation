@@ -1,31 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>SummerViz Map</title>
-
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="http://d3js.org/topojson.v1.min.js"></script>
-
-	<!--Load up the Leaflet library -->
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-	
+<meta charset=utf-8 />
+<title>A simple map</title>
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
 </head>
 <body>
-
-
-<!--Define the map -->
-<div id="map" style="width: 600px; height: 400px"></div>
-<!--Load plugins -->
-<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-<script src="shp.js"></script>
-<script src="leaflet.shpfile.js"></script>
+<div id='map'></div>
 <script>
-// Define the map (Latitude, Longitude, Zoomlevel)
-var map = L.map('map').setView([-37.815145,144.966777], 13);//-37.877, 145.0445], 17);
-// Load the map tile data
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' }).addTo(map);
+L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
+var map = L.mapbox.map('map', 'mapbox.streets')
+    .setView([-37.815145,144.966777], 15);
+	
+	
+	
+	var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+	
+	g.append("rect")
+    .attr("x", 50)
+    .attr("y", 50)
+    .attr("width", 130)
+    .attr("height", 160)
+    .attr("fill", "red")
+    .attr("id", "rectLabel");
 </script>
 </body>
 </html>
-
