@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SummerViz</title>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+
+</head>
+<body>
+
+<svg class="canvas" width="960px" height="600px">
+
+</svg>
+
+<script>
+
+    function circleByAngle(xCenter, yCenter, r, xScale, data) {
+
+        points = [];
+
+        var step = Math.PI / 120;
+        startAngle = Math.PI / 2;
+        var maxAngle = Math.PI + startAngle;
+
+        for (var theta = startAngle; theta < maxAngle; theta += step) {
+
+            var currentStep = (theta - startAngle);
+            var maxSteps = (maxAngle - startAngle);
+
+            var pointIndex = Math.floor(currentStep / maxSteps * 12);
+            var r = data[pointIndex] + 100;
+
+            var x = xCenter + (r * Math.cos(theta) * xScale);
+            var y = yCenter - r * Math.sin(theta);
+            points[points.length] = [x, y];
+        }
+
+        return points;
+    }
+
+    function circleByRadius(xCenter, yCenter, r, xScale, data) {
+
+        points = [];
+
+        var x, y, r2;
+
+        r2 = r * r;
+        for (x = 0; x <= r; x++) {
+            y = (Math.sqrt(r2 - x * x) + 0.5);
+            points[points.length] = [(xCenter + x * xScale), yCenter + y];
+        }
+
+        for (x = r; x > 0; x--) {
+            y = (Math.sqrt(r2 - x * x) + 0.5);
+            points[points.length] = [(xCenter + x * xScale), yCenter - y];
+        }
+
+        return points;
+    }
+
+    function circleSimple(xCenter, yCenter, innerRadius) {
+        points = [];
+
+        return circleByRadius(xCenter, yCenter, innerRadius, 1).concat(circleByRadius(xCenter, yCenter, innerRadius, -1).reverse());
+    }
+
+    var maxs = [0,
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    40,
+                    30,
+                    20,
+                    10,
+                    0];
+    var mins = [
+                    100,
+                    90,
+                    80,
+                    70,
+                    60,
+                    50,
+                    60,
+                    70,
+                    80,
+                    90,
+                    100,
+                    ]
+    var hourData = [maxs, mins];
+
+    hourData = [
+                    [40,
+                        50,
+                        40,
+                        50,
+                        40,
+                        50,
+                        40,
+                        50,
+                        40,
+                        50,
+                        40,
+                        50],
+
+                    [
+                        10,
+                        20,
+                        10,
+                        20,
+                        10,
+                        20,
+                        10,
+                        20,
+                        10,
+                        20,
+                        10,
+                        20]];
+
+    var points = circleByAngle(200, 200, 70, 1, hourData[0]).concat(circleByAngle(200, 200, 70, 1, hourData[1]).reverse());
+
+    var canvas = d3.select("svg")
+    .append("svg:polygon")
+    .attr("fill", "red")
+    //.attr("stroke", "black")
+    .attr("points", points);
+
+    var points = circleByAngle(200, 200, 70, -1, hourData[0]).concat(circleByAngle(200, 200, 70, -1, hourData[1]).reverse());
+
+    var canvas = d3.select("svg")
+    .append("svg:polygon")
+    .attr("fill", "blue")
+    //.attr("stroke", "black")
+    .attr("points", points);
+
+    //points = circleSimple(200, 200, 70);
+</script>
+</body>
+</html>
+
