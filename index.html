@@ -4,10 +4,138 @@
     <meta charset="UTF-8">
     <title>SummerViz</title>
     <script src="https://d3js.org/d3.v4.min.js"></script>
+    
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+  
+</style>
 </head>
 <body>
     <svg class="canvas" width="960px" height="600px"></svg>
     <script src="dist/bundle.js"></script>
+
+    
+<div id="map"></div>
+<script>
+
+
+function jaggedDonut(xCenter, yCenter, minRadius, donutAngle, xScale, data) {
+
+    let points = [];
+
+    //the radiun step for rotating around origin
+    const step = Math.PI / 360.0;
+
+    //we have to have initial rotatation of pi/2 as we want our helf-donut to be vertical, no horizontal
+    const startAngle = Math.PI / 2.0;
+
+    //rotate until we hit pi radians, plus our initial offset
+    const maxAngle = donutAngle + startAngle;
+
+    for (let theta = startAngle; theta < maxAngle; theta += step) {
+
+        //calculate our current step by dividing current angle by pi radians (that gives us a normalized % of how far we are through a half-rotation, 
+        //multiply that by how many data points we have in our data array to get the index of the radius to show
+        const currentStep = (theta - startAngle);
+        const pointIndex = Math.floor(currentStep / donutAngle * data.length);
+
+        //get the radius
+        const r = data[pointIndex] + minRadius;
+
+        //calulate the points
+        const x = xCenter + (r * Math.cos(theta) * xScale);
+        const y = yCenter - r * Math.sin(theta);
+
+        //console.log(x + " " + y);   
+
+        //store to array
+        points.push([x, y]);
+    }
+
+    return points;
+}
+
+    var donutMinimumRadius = 7;
+    var donutAngle = Math.PI; // will mostly likely just be Math.PI for semi-circle or 2*Math.PI for full circle;
+
+
+
+
+
+	L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
+	var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
+		.setView([-37.8148798759503,144.965210438559], 15);
+	
+	map.touchZoom.disable();
+	map.doubleClickZoom.disable();
+	map.scrollWheelZoom.disable();
+	map.boxZoom.disable();
+	map.keyboard.disable();
+	map.dragging.disable();
+	
+	
+	
+	
+	
+	
+	var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("width", map._size.x).attr("height", map._size.y),
+    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+	
+	
+	var data = [
+    { "coords" : [ -37.815145 , 144.966777]},
+    { "coords" : [ -37.811123 , 144.962733]}
+	].map( function(d){ var newPoint = map.latLngToLayerPoint( d.coords ); d.coords = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )
+	
+
+	g.selectAll("circle").data( data ).enter().append("circle")
+    .attr("cx", function(d){ console.log(d); return d.coords.x } )
+    .attr("cy", function(d){ return d.coords.y } )
+    .attr("r", 10 )
+    .style("fill", "red")
+    .on("mouseover", function(d, i) {
+        
+        var s = d3.select(this);
+        var marker = [];
+
+        //this will need to be replaced to get the data from this data point
+        var maxs = [40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 90, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50];
+        var mins = [0, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20];
+        var hourData = [maxs, mins];
+
+        var points = jaggedDonut(+s.attr("cx"), +s.attr("cy"), donutMinimumRadius, donutAngle, 1, hourData[0])
+                .concat(jaggedDonut(+s.attr("cx"), +s.attr("cy"), donutMinimumRadius, donutAngle, 1, hourData[1]).reverse());
+        
+        marker.push(svg.append("svg:polygon")
+        .attr("fill", "transparent")
+        .attr("stroke", "red")
+        .attr("points", points));
+
+        //this will need to be replaced to get the data from this data point
+        var maxs = [40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 90, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50];
+        var mins = [0, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20];
+        var hourData = [maxs, mins];
+
+        var points = jaggedDonut(+s.attr("cx"), +s.attr("cy"), donutMinimumRadius, donutAngle, -1, hourData[0])
+                .concat(jaggedDonut(+s.attr("cx"), +s.attr("cy"), donutMinimumRadius, donutAngle, -1, hourData[1]).reverse());
+        
+        marker.push(svg.append("svg:polygon")
+        .attr("fill", "transparent")
+        .attr("stroke", "blue")
+        .attr("points", points))
+
+        svg.selectAll("polygon").on("mouseout", function(d, i) {
+            marker[0].remove();
+            marker[1].remove();
+            //console.log("removed");
+        });
+    })
+
+</script>
 </body>
 </html>
 
