@@ -19,7 +19,7 @@
 <script>
 	L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
 	var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
-		.setView([-37.813145,144.966777], 15);
+		.setView([-37.8148798759503,144.965210438559], 15);
 	
 	map.touchZoom.disable();
 	map.doubleClickZoom.disable();
@@ -35,23 +35,36 @@
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
 	
 	var data = [];
-	d3.csv("prices.csv", function(prices){
-			for (var i = 0; i < prices.length; i++) {
-				  data.push({"coords" : [ parseFloat(prices[i].Latitude), parseFloat(prices[i].Longitude)]});
+	d3.csv("sensors.csv", function(sensors){
+			for (var i = 0; i < sensors.length; i++) {
+				  data.push({"id": sensors[i]["Sensor ID"], "oldcoords" : [ parseFloat(sensors[i].Latitude), parseFloat(sensors[i].Longitude)], "count": 0});
 				}
+				
+		d3.csv("volumes.csv", function(volumes){
+				for (var i = 0; i < volumes.length; i++) {
+					for (var j =0; j<data.length;j++){
+						if (data[j].id == volumes[i]["Sensor_ID"]) data[j].count = data[j].count+ parseInt(volumes[i]["Hourly_Counts"]);
+				  }
+				}
+				
+				data.map( function(d){ var newPoint = map.latLngToLayerPoint( d.oldcoords ); d["coords"] = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )
+	
+				g.selectAll("circle").data( data ).enter().append("circle")
+				.attr("cx", function(d){ return d.coords.x } )
+				.attr("cy", function(d){ return d.coords.y } )
+				.attr("r", function(d){return d.count / 1000000;} )
+				.style("fill", "blue")
+				.on("mouseover", function(d) {
+				console.log( String(d.oldcoords));
+					});
+				});
+		});
 	
 	/*var data = [
     { "coords" : [ -37.81786445, 144.9650682]},
     { "coords" : [ -37.81234347, 144.9566477]}
 	].map( function(d){ var newPoint = map.latLngToLayerPoint( d.coords ); d.coords = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )*/
-	data.map( function(d){ var newPoint = map.latLngToLayerPoint( d.coords ); d.coords = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )
 	
-	g.selectAll("circle").data( data ).enter().append("circle")
-    .attr("cx", function(d){ console.log(d); return d.coords.x } )
-    .attr("cy", function(d){ return d.coords.y } )
-    .attr("r", 10 )
-    .style("fill", "red")
-	});
 
 </script>
 </body>
