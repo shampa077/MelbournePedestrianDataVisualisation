@@ -8,7 +8,7 @@
     Only these will be seen from other modules
 */
 module.exports = {
-    jaggedHalfDonut: jaggedHalfDonut,
+    jaggedDonut: jaggedDonut,
     simpleCircle: simpleCircle
 }
 
@@ -21,7 +21,7 @@ xScale: either 1 or -1 depending on which 'side' of the circle you want to rende
 data: two dimensional numeric array, one array being an array of minimum values, the other being an array of maximum values
 
 */
-function jaggedHalfDonut(xCenter, yCenter, minRadius, xScale, data) {
+function jaggedDonut(xCenter, yCenter, minRadius, donutAngle, xScale, data) {
 
     let points = [];
 
@@ -32,14 +32,14 @@ function jaggedHalfDonut(xCenter, yCenter, minRadius, xScale, data) {
     const startAngle = Math.PI / 2.0;
 
     //rotate until we hit pi radians, plus our initial offset
-    const maxAngle = (Math.PI + startAngle);
+    const maxAngle = donutAngle + startAngle;
 
     for (let theta = startAngle; theta < maxAngle; theta += step) {
 
         //calculate our current step by dividing current angle by pi radians (that gives us a normalized % of how far we are through a half-rotation, 
         //multiply that by how many data points we have in our data array to get the index of the radius to show
         const currentStep = (theta - startAngle);
-        const pointIndex = Math.floor(currentStep / Math.PI * data.length);
+        const pointIndex = Math.floor(currentStep / donutAngle * data.length);
 
         //get the radius
         const r = data[pointIndex] + minRadius;
