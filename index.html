@@ -22,7 +22,44 @@
 <div id="map"></div>
 <script>
 
-function jaggedDonut(xCenter, yCenter, minRadius, donutAngle, xScale, data) {
+function jaggedDonut(xCenter, yCenter, minRadius, maxRadius, minValue, maxValue, donutAngle, xScale, maxData, minData) 
+{
+
+    //if hardcoded max-value isn't set, loop through all values to find the max, and scale all the points based on that.
+    if (maxValue === false)
+    {
+        maxValue = -99;
+
+        for (var i = 0; i < maxData.length; i++)
+        {
+            maxValue = Math.max(maxValue, maxData[i]);
+        }
+    }
+
+    //if hardcoded max-value isn't set, loop through all values to find the max, and scale all the points based on that.
+    if (minValue === false)
+    {
+        minValue = 99;
+
+        for (var i = 0; i < minData.length; i++)
+        {
+            minValue = Math.min(minValue, minData[i]);
+        }
+    }
+
+    console.log(minValue+ " "+maxValue);
+
+    //we have to reverse the 'second' loop, whether that's min or max, as we are drawing a poly, going around once (e.g. clockwise), then looping back the other direction (e.g. counter-cw)
+	return jaggedDonutOutline(xCenter, yCenter, minRadius, maxRadius, minValue, maxValue, donutAngle, -1, maxData)
+     .concat(jaggedDonutOutline(xCenter, yCenter, minRadius, maxRadius, minValue, maxValue, donutAngle, -1, minData).reverse());
+
+}
+
+function jaggedDonutOutline(xCenter, yCenter, minRadius, maxRadius, minValue, maxValue, donutAngle, xScale, data) 
+{
+
+    const valueRange = maxValue - minValue;
+    const radiusRange = maxRadius - minRadius;
 
     let points = [];
 
@@ -42,8 +79,11 @@ function jaggedDonut(xCenter, yCenter, minRadius, donutAngle, xScale, data) {
         const currentStep = (theta - startAngle);
         const pointIndex = Math.floor(currentStep / donutAngle * data.length);
 
+        //calculate this data point as a normalized 0-1 value
+        const normalizedRange = 1.0 * (Math.min(Math.max(data[pointIndex], minValue), maxValue) - minValue) / valueRange;
+
         //get the radius
-        const r = data[pointIndex] + minRadius;
+        const r = minRadius + normalizedRange * radiusRange;
 
         //calulate the points
         const x = xCenter + (r * Math.cos(theta) * xScale);
@@ -57,6 +97,7 @@ function jaggedDonut(xCenter, yCenter, minRadius, donutAngle, xScale, data) {
 
     return points;
 }
+/*
 
     var donutMinimumRadius = 7;
     var donutAngle = Math.PI; // will mostly likely just be Math.PI for semi-circle or 2*Math.PI for full circle;
@@ -75,11 +116,6 @@ function jaggedDonut(xCenter, yCenter, minRadius, donutAngle, xScale, data) {
 	map.boxZoom.disable();
 	map.keyboard.disable();
 	map.dragging.disable();
-	
-	
-	
-	
-	
 	
 	var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("width", map._size.x).attr("height", map._size.y),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -133,8 +169,32 @@ function jaggedDonut(xCenter, yCenter, minRadius, donutAngle, xScale, data) {
             //console.log("removed");
         });
     })
+*/
+
+var maxs = [40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50];
+var mins = [15, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20];
+var hourData = [maxs, mins];
+
+var donutMinimumRadius = 60;
+var donutMaximumRadius = 80;
+var donutMinimumValue = false;
+var donutMaximumValue = false;
+
+var donutAngle = Math.PI; // will mostly likely just be Math.PI for semi-circle or 2*Math.PI for full circle;
+var donutCenterX = 200;
+var donutCenterY = 200;
+
+
+var points = jaggedDonut(donutCenterX, donutCenterY, donutMinimumRadius, donutMaximumRadius, donutMinimumValue, donutMaximumValue, donutAngle, -1, hourData[0], hourData[1]);
+
+console.log(JSON.stringify(points));
+
+var canvas = d3.select("svg")
+.append("svg:polygon")
+.attr("fill", "transparent")
+.attr("stroke", "blue")
+.attr("points", points);
 
 </script>
 </body>
 </html>
-
