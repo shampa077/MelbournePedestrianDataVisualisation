@@ -8,12 +8,98 @@ const dateToIndex = require("./dateToIndex").dateToIndex;
 const jaggedDonut = Donut.jaggedDonut;
 const simpleCircle = Donut.simpleCircle;
 
+const _ = require("lodash");
+const moment = require("moment");
+
 var global_hourly_data;
 
 var donuts = {};
 
+const MonthToNumber = {
+  'January': 1,
+  'February': 2,
+  'March': 3,
+  'April': 4,
+  'May': 5,
+  'June': 6,
+  'July': 7,
+  'August': 8,
+  'September': 9,
+  'October': 10,
+  'November': 11,
+  'December': 12
+}
 
-Data.readData((data_locs, data_counts) => {
+function transform_count_data(data) {
+
+  let parsed = _.map(data, (d) => {
+    return {
+      year: parseInt(d.Year),
+      month: parseInt(d.Month),
+      sensor_id: parseInt(d.Sensor_ID),
+      date: parseInt(d.Mdate),
+      time: parseInt(d.Time),
+      count: parseInt(d.Hourly_Counts)
+    }
+  })
+
+
+  let sorted = _.sortBy(parsed, [
+    "sensor_id",
+    "year",
+    "month",
+    "date",
+    "time"
+  ])
+
+
+  let result = [];
+
+  for (let sid = 1; sid < 50; sid++) {
+
+    let sensor_one = _.filter(sorted, (d) => { return d.sensor_id === sid });
+
+    let daily_counts = {};
+
+    _.each(sensor_one, (d) => {
+
+      let date_str = d.date + "-" + d.month + "-" + d.year;
+
+      if (!daily_counts[date_str]) {
+        daily_counts[date_str] = [];
+      }
+
+      daily_counts[date_str].push(d.count);
+
+    });
+
+    result.push(daily_counts);
+
+  }
+  console.log(JSON.stringify(result));
+
+  return result;
+
+
+}
+
+function process_temp_data(temp_data) {
+
+  let date_to_type = {};
+
+  _.each(temp_data, (d) => {
+
+    let date_str = d.Day + "-" + d.Month + "-" + d.Year;
+
+    date_to_type[date_str] = parseInt(d.type);
+
+  })
+
+  return date_to_type;
+}
+
+
+Data.readData((data_locs, data_counts, data_temp) => {
 
   let locations = {};
 
@@ -26,59 +112,86 @@ Data.readData((data_locs, data_counts) => {
     }
   })
 
-  let data = {};
+  /// NOTE(maxim): no need to transform pre-processed
+  // data_counts = transform_count_data(data_counts);
 
-  data_counts.forEach((d) => {
+  data_temp = process_temp_data(data_temp);
 
-    const sid = d.Sensor_ID;
-
-    if (data[sid] === undefined) {
-      data[sid] = [];
-    }
-
-    data[sid].push(d.Hourly_Counts);
-  })
-
-  
-  createMap(data_locs, function(){});
-  prepareDonutData(data[1]);
-
-  global_hourly_data = prepareDonutData(data[1]);
+  createMap(data_locs, data_counts, data_temp, () => {});
 
   /// TODO: use data to create maxs and mins for 
 
 });
 
-function prepareDonutData(data) {
-  let hourData = [];
+function prepareDonutData(daily_counts, data_temp, tp1, tp2) {
 
-  const no_days = data.length / 24;
+  console.log("prepare donut data");
+
+  const m_start = moment([tp1.y, tp1.m, tp1.d]);
+  const m_end = moment([tp2.y, tp2.m, tp2.d]);
+
+  let m_cur = m_start;
+
+  let daily_per_hour_cold = [];
+  let daily_per_hour_hot = [];
 
   for (let hour = 0; hour < 24; hour++) {
-    hourData.push([]);
-    for (let day = 0; day < no_days; day++) {
-      const idx = hour + day * 24;
+    daily_per_hour_cold.push([]);
+    daily_per_hour_hot.push([]);
+  }
 
-      hourData[hour].push(data[idx]);
+  while (m_end.diff(m_cur) > 0) {
+
+    let d = m_cur.date()
+    let m = m_cur.month()
+    let y = m_cur.year()
+    m_cur = m_cur.add(1, 'day');
+
+    let date_str = d + "-" + m + "-" + y;
+
+    const counts = daily_counts[date_str];
+
+    console.log(date_str);
+
+    if (counts === undefined) continue;
+
+    if (data_temp[date_str] === 0) {
+
+      for (let hour = 0; hour < 24; hour++) {
+        daily_per_hour_cold[hour].push(counts[hour]);
+      }
+
+    } else {
+
+
+      for (let hour = 0; hour < 24; hour++) {
+        daily_per_hour_hot[hour].push(counts[hour]);
+      }
+
     }
+
   }
 
-  let result = {mins: [], maxs: []};
-  /// for each hour figure out the min and the max
-  for (let hour = 0; hour < 24; hour++) {
+  let mins_cold = daily_per_hour_cold.map((hour_data) => {
+    return _.min(hour_data);
+  })
 
-    const max = Math.max.apply(null, hourData[hour]);
-    const min = Math.min.apply(null, hourData[hour]);
+  let maxs_cold = daily_per_hour_cold.map((hour_data) => {
+    return _.max(hour_data);
+  })
 
-    result.mins.push(min);
-    result.maxs.push(max);
-  }
+  let mins_hot = daily_per_hour_hot.map((hour_data) => {
+    return _.min(hour_data);
+  })
+
+  let maxs_hot = daily_per_hour_hot.map((hour_data) => {
+    return _.max(hour_data);
+  })
+
+  let result = {cold: {mins: mins_cold, maxs: maxs_cold}, hot: {mins: mins_hot, maxs: maxs_hot} };
 
   return result;
 
-  // createDonut(result);
-
-  // createMap(result)
 }
 
 function createDonut(cx, cy, hourData) {
@@ -95,8 +208,15 @@ function createDonut(cx, cy, hourData) {
 
     var donutAngle = Math.PI; // will mostly likely just be Math.PI for semi-circle or 2*Math.PI for full circle;
 
+
+    // console.log(hourData);
     //"hot" half donut
-    var points = jaggedDonut(cx, cy, donutMinimumRadius, donutMaximumRadius, donutMinimumValue, donutMaximumValue, donutAngle, 1, hourData.maxs, hourData.mins) 
+    var points = jaggedDonut(cx, cy,
+      donutMinimumRadius,
+      donutMaximumRadius,
+      donutMinimumValue,
+      donutMaximumValue,
+      donutAngle, 1, hourData.hot.maxs, hourData.hot.mins) 
     let first_half = svg.append("svg:polygon")
       .attr("fill", "red")
     //.attr("stroke", "black")
@@ -104,7 +224,12 @@ function createDonut(cx, cy, hourData) {
 
 
     //"cold" half donut
-    var points = jaggedDonut(cx, cy, donutMinimumRadius, donutMaximumRadius, donutMinimumValue, donutMaximumValue, donutAngle, -1, hourData.maxs, hourData.mins) 
+    var points = jaggedDonut(cx, cy,
+      donutMinimumRadius,
+      donutMaximumRadius,
+      donutMinimumValue,
+      donutMaximumValue,
+      donutAngle, -1, hourData.cold.maxs, hourData.cold.mins) 
     let second_half = svg.append("svg:polygon")
       .attr("fill", "blue")
     //.attr("stroke", "black")
@@ -115,7 +240,7 @@ function createDonut(cx, cy, hourData) {
 }
 
 
-function createMap(locs, callback){
+function createMap(locs, data_counts, temp_data, callback){
 	L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
 
 	var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
@@ -146,7 +271,12 @@ function createMap(locs, callback){
         donuts[i].shown = true;
         var s = d3.select(this);
 
-        var hourData = global_hourly_data;
+
+        let start = {d: 1, m: 12, y: 2014, h: 0};
+        let end =   {d: 31, m: 12, y: 2014, h: 0};
+
+
+        var hourData = prepareDonutData(data_counts[i], temp_data, start, end)
 
         donuts[i].svgs = createDonut(+s.attr("cx"), +s.attr("cy"), hourData);
     })
@@ -154,6 +284,7 @@ function createMap(locs, callback){
       donuts[i].keep = !donuts[i].keep;
     })
     .on("mouseout", (d, i) => {
+
       if (donuts[i].shown && !donuts[i].keep) {
         donuts[i].shown = false;
         donuts[i].svgs[0].remove();
@@ -163,5 +294,3 @@ function createMap(locs, callback){
 	
 	callback();
 }
-
-	
