@@ -36,6 +36,8 @@ Data.readData((data_locs, data_counts) => {
     data[sid].push(d.Hourly_Counts);
   })
 
+  
+  createMap(data_locs, function(){});
   prepareDonutData(data[1]);
 
   /// TODO: use data to create maxs and mins for 
@@ -107,11 +109,11 @@ function createDonut(cx, cy, hourData) {
 
   
   
-  function createMap(callback){
+  function createMap(locs, callback){
 	L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
 
 	var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
-		.setView([-37.8148798759503,144.965210438559], 15);
+		.setView([-37.8108798759503,144.960010438559], 14.3);
 
   map.touchZoom.disable();
   map.doubleClickZoom.disable();
@@ -123,16 +125,12 @@ function createDonut(cx, cy, hourData) {
   var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("width", map._size.x).attr("height", map._size.y),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-
-  var data = [
-    { "coords" : [ -37.815145 , 144.966777]},
-    { "coords" : [ -37.811123 , 144.962733]}
-  ].map( function(d){ var newPoint = map.latLngToLayerPoint( d.coords ); d.coords = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )
+  locs.map( function(d){ var newPoint = map.latLngToLayerPoint( [d.Latitude, d.Longitude] ); d["lpoints"] = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )
 
 
-  g.selectAll("circle").data( data ).enter().append("circle")
-    .attr("cx", function(d){ return d.coords.x } )
-    .attr("cy", function(d){ return d.coords.y } )
+  g.selectAll("circle").data( locs ).enter().append("circle")
+    .attr("cx", function(d){ return d.lpoints.x } )
+    .attr("cy", function(d){ return d.lpoints.y } )
     .attr("r", 10 )
     .style("fill", "red")
     .on("mouseover", function(d, i) {
@@ -156,4 +154,4 @@ function createDonut(cx, cy, hourData) {
 	callback();
 }
 
-	createMap(function(){});
+	
