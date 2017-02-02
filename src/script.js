@@ -2,6 +2,7 @@
 
 const Donut = require("./donut");
 const Data = require("./data");
+const VDateTime = require("./datetime");
 
 const jaggedDonut = Donut.jaggedDonut;
 const simpleCircle = Donut.simpleCircle;
