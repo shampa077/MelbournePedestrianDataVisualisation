@@ -2,10 +2,10 @@
 
 const Donut = require("./donut");
 const Data = require("./data");
-const VMap = require("./map");
 
 const jaggedDonut = Donut.jaggedDonut;
 const simpleCircle = Donut.simpleCircle;
+
 
 
 Data.readData((data_locs, data_counts) => {
@@ -103,10 +103,13 @@ function createDonut(cx, cy, hourData) {
 
 }
 
+  
+  
+  function createMap(callback){
+	L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
 
-  L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
-  var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
-    .setView([-37.8148798759503,144.965210438559], 15);
+	var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
+		.setView([-37.8148798759503,144.965210438559], 15);
 
   map.touchZoom.disable();
   map.doubleClickZoom.disable();
@@ -126,7 +129,7 @@ function createDonut(cx, cy, hourData) {
 
 
   g.selectAll("circle").data( data ).enter().append("circle")
-    .attr("cx", function(d){ console.log(d); return d.coords.x } )
+    .attr("cx", function(d){ return d.coords.x } )
     .attr("cy", function(d){ return d.coords.y } )
     .attr("r", 10 )
     .style("fill", "red")
@@ -147,3 +150,8 @@ function createDonut(cx, cy, hourData) {
             svgs[1].remove();
         });
     })
+	
+	callback();
+}
+
+	createMap(function(){});
