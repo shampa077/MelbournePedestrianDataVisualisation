@@ -254,6 +254,8 @@ function createMap(locs, data_counts, temp_data, callback){
 	var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
 		.setView([-37.8108798759503,144.960010438559], 14.3);
 
+		map.getPane('tilePane').style.opacity = 0.4;
+		
   map.touchZoom.disable();
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.disable();
