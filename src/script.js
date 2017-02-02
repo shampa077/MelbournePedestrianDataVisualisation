@@ -264,13 +264,45 @@ function createMap(locs, data_counts, temp_data, callback){
   var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("width", map._size.x).attr("height", map._size.y),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-  locs.map( function(d){ var newPoint = map.latLngToLayerPoint( [d.Latitude, d.Longitude] ); d["lpoints"] = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )
+  locs.map( function(d){ var newPoint = map.latLngToLayerPoint( [d.Latitude, d.Longitude] ); d["lpoints"] = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } );
+  
+  var loctypes =["Attraction","Dining","Entertainment","Housing","Library","Meeting","Office","Park","Shopping","Station","Street","University"];
+  var mycolor = d3.scaleOrdinal(d3.schemeCategory20);
 
   g.selectAll("circle").data( locs ).enter().append("circle")
     .attr("cx", function(d){ return d.lpoints.x } )
     .attr("cy", function(d){ return d.lpoints.y } )
-    .attr("r", 10 )
-    .style("fill", "red")
+    .attr("r", function(d,i){
+		
+		var selectedDateText = document.getElementById("mydate").value;
+		var selectedDate = new Date(selectedDateText);
+		var day = selectedDate.getDate();
+		var month = selectedDate.getMonth()+1;
+		var year = selectedDate.getFullYear();
+		var date_idx = day+"-"+month+"-"+year;
+		var selectedTime = document.getElementById("mytime").value;
+		//var xidx = dateToIndex(day,month,year);
+		//xidx = xidx + parseInt(selectedTime);
+		var time_idx = parseInt(selectedTime);
+		var radius;
+		
+		var sensor_idx = parseInt(d["Sensor ID"]);
+		if (data_counts[sensor_idx-1] == null) radius = 0;
+		else if (data_counts[sensor_idx-1][date_idx] == null) radius= 0;
+		else radius= data_counts[sensor_idx-1][date_idx][time_idx] / 200;
+		
+		return radius;
+
+
+	})
+    .style("fill", function(d){
+		
+		var xidx = loctypes.indexOf(d["Location Type"]);
+		if (xidx == -1) xidx = loctypes.length;
+		var thecolor = mycolor(xidx);
+		return thecolor;
+		
+	})
     .on("mouseover", function(d, i) {
 
         if (donuts[i] === undefined) { donuts[i] = {}}
@@ -300,7 +332,27 @@ function createMap(locs, data_counts, temp_data, callback){
         donuts[i].svgs[0].remove();
         donuts[i].svgs[1].remove();
       }
-    })
+    });
+	
+	
+	var catSvg = d3.select("#categories").append("svg").attr("width",800).attr("height",75);
+	catSvg.selectAll("circle").data(loctypes).enter().append("circle").attr("cx",function(d,i){
+		if (i > 5) return (i - 5)*140 - 130;
+		else return (i+1)*140 - 130;
+		})
+		.attr("cy", function(d,i){
+		if (i > 5) return 50;
+		else return 15;
+		}).attr("r",10).style("fill", function(d,i){return mycolor(i);});
+	catSvg.selectAll("text").data(loctypes).enter().append("text").attr("x",function(d,i){
+		if (i > 5) return (i - 5)*140 - 107;
+		else return (i+1)*140 - 107;
+		})
+		.attr("y", function(d,i){
+			if (i > 5) return 55;
+		else return 20;
+			
+		}).text(function(d){return d;});
 	
 	callback();
 }

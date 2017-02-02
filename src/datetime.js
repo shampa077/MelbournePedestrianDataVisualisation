@@ -2,7 +2,7 @@ var today = new Date();
 var dateInput = document.getElementById("mydate");
 var timeInput = document.getElementById("mytime");
 
-var mystartdate = "2010-01-01";
+var mystartdate = "2013-01-01";
 /*var dd = today.getDate();
 if (String(dd).length ==1 ) dd= "0"+String(dd);
 var mm = today.getMonth()+1; //January is 0!
