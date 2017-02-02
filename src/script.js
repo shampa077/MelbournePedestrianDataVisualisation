@@ -12,7 +12,7 @@ const _ = require("lodash");
 const moment = require("moment");
 
 var global_hourly_data;
-var global_locs;
+var global_data_counts;
 
 var donuts = {};
 
@@ -116,7 +116,7 @@ Data.readData((data_locs, data_counts, data_temp) => {
   // data_counts = transform_count_data(data_counts);
 
   data_temp = process_temp_data(data_temp);
-	global_locs = data_locs;
+  global_data_counts = data_counts;
   createMap(data_locs, data_counts, data_temp, () => {});
 
   /// TODO: use data to create maxs and mins for 
@@ -265,7 +265,7 @@ function createMap(locs, data_counts, temp_data, callback){
   map.dragging.disable();
 
   var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("width", map._size.x).attr("height", map._size.y),
-    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+    g = svg.append("g").attr("id","mapg").attr("class", "leaflet-zoom-hide");
 
   locs.map( function(d){ var newPoint = map.latLngToLayerPoint( [d.Latitude, d.Longitude] ); d["lpoints"] = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } );
   
@@ -371,10 +371,13 @@ dateInput.addEventListener("click", function(){
 	updateSensors();
 });
 
+timeInput.addEventListener("click", function(){
+	updateSensors();
+});
+
 function updateSensors(){
 	var tmpg = d3.select("#mapg");
-	tmpg.selectAll("circle").data(global_locs).transition()
-                        .duration(500).attr("r", function(d,i){
+	tmpg.selectAll("circle").transition().attr("r", function(d,i){
 							
 							var selectedDateText = document.getElementById("mydate").value;
 							var selectedDate = new Date(selectedDateText);
@@ -387,12 +390,11 @@ function updateSensors(){
 							var radius;
 							
 							var sensor_idx = parseInt(d["Sensor ID"]);
-							if (data_counts[sensor_idx-1] == null) radius = 0;
-							else if (data_counts[sensor_idx-1][date_idx] == null) radius= 0;
-							else radius= data_counts[sensor_idx-1][date_idx][time_idx] / 200;
+							if (global_data_counts[sensor_idx-1] == null) radius = 0;
+							else if (global_data_counts[sensor_idx-1][date_idx] == null) radius= 0;
+							else radius= global_data_counts[sensor_idx-1][date_idx][time_idx] / 200;
 		
 							return radius;
-							
 	});
 }
 
