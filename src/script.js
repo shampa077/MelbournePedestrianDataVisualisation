@@ -52,7 +52,6 @@ function transform_count_data(data) {
     "time"
   ])
 
-
   let result = [];
 
   for (let sid = 1; sid < 50; sid++) {
@@ -125,8 +124,6 @@ Data.readData((data_locs, data_counts, data_temp) => {
 
 function prepareDonutData(daily_counts, data_temp, tp1, tp2) {
 
-  console.log("prepare donut data");
-
   const m_start = moment([tp1.y, tp1.m, tp1.d]);
   const m_end = moment([tp2.y, tp2.m, tp2.d]);
 
@@ -136,8 +133,8 @@ function prepareDonutData(daily_counts, data_temp, tp1, tp2) {
   let daily_per_hour_hot = [];
 
   for (let hour = 0; hour < 24; hour++) {
-    daily_per_hour_cold.push([]);
-    daily_per_hour_hot.push([]);
+    daily_per_hour_cold.push([1]);
+    daily_per_hour_hot.push([1]);
   }
 
   while (m_end.diff(m_cur) > 0) {
@@ -151,7 +148,6 @@ function prepareDonutData(daily_counts, data_temp, tp1, tp2) {
 
     const counts = daily_counts[date_str];
 
-    console.log(date_str);
 
     if (counts === undefined) continue;
 
@@ -173,22 +169,28 @@ function prepareDonutData(daily_counts, data_temp, tp1, tp2) {
   }
 
   let mins_cold = daily_per_hour_cold.map((hour_data) => {
+    if (hour_data.length < 0) return 1;
     return _.min(hour_data);
   })
 
   let maxs_cold = daily_per_hour_cold.map((hour_data) => {
+    if (hour_data.length < 0) return 1;
     return _.max(hour_data);
   })
 
   let mins_hot = daily_per_hour_hot.map((hour_data) => {
+    if (hour_data.length < 0) return 1;
     return _.min(hour_data);
   })
 
   let maxs_hot = daily_per_hour_hot.map((hour_data) => {
+    if (hour_data.length < 0) return 1;
     return _.max(hour_data);
   })
 
   let result = {cold: {mins: mins_cold, maxs: maxs_cold}, hot: {mins: mins_hot, maxs: maxs_hot} };
+
+  console.log(result);
 
   return result;
 
@@ -271,12 +273,12 @@ function createMap(locs, data_counts, temp_data, callback){
         donuts[i].shown = true;
         var s = d3.select(this);
 
+        let start = {d: 1, m: 7, y: 2013, h: 0};
+        let end =   {d: 31, m: 7, y: 2013, h: 0};
 
-        let start = {d: 1, m: 12, y: 2014, h: 0};
-        let end =   {d: 31, m: 12, y: 2014, h: 0};
+        const sid = parseInt(d["Sensor ID"]);
 
-
-        var hourData = prepareDonutData(data_counts[i], temp_data, start, end)
+        var hourData = prepareDonutData(data_counts[sid], temp_data, start, end)
 
         donuts[i].svgs = createDonut(+s.attr("cx"), +s.attr("cy"), hourData);
     })
