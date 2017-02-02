@@ -124,6 +124,8 @@ Data.readData((data_locs, data_counts, data_temp) => {
 
 function prepareDonutData(daily_counts, data_temp, tp1, tp2) {
 
+  console.log(daily_counts);
+
   const m_start = moment([tp1.y, tp1.m, tp1.d]);
   const m_end = moment([tp2.y, tp2.m, tp2.d]);
 
@@ -147,6 +149,8 @@ function prepareDonutData(daily_counts, data_temp, tp1, tp2) {
     let date_str = d + "-" + m + "-" + y;
 
     const counts = daily_counts[date_str];
+
+    // console.log(counts)
 
 
     if (counts === undefined) continue;
@@ -201,14 +205,14 @@ function createDonut(cx, cy, hourData) {
     const svg = d3.select("svg");
 
     //set the min and max radius values for the donut
-    var donutMinimumRadius = 60;
+    var donutMinimumRadius = 20;
     var donutMaximumRadius = 80;
 
      //leave as false if we want to auto-scale based on min/max for this specific hourlyData dataset, otherwise can 'cap' values at this value
     var donutMinimumValue = false;
     var donutMaximumValue = false;
 
-    var donutAngle = Math.PI; // will mostly likely just be Math.PI for semi-circle or 2*Math.PI for full circle;
+    var donutAngle = Math.PI * 2; // will mostly likely just be Math.PI for semi-circle or 2*Math.PI for full circle;
 
 
     // console.log(hourData);
@@ -221,6 +225,7 @@ function createDonut(cx, cy, hourData) {
       donutAngle, 1, hourData.hot.maxs, hourData.hot.mins) 
     let first_half = svg.append("svg:polygon")
       .attr("fill", "red")
+      .attr("opacity", 0.5)
     //.attr("stroke", "black")
       .attr("points", points);
 
@@ -231,9 +236,10 @@ function createDonut(cx, cy, hourData) {
       donutMaximumRadius,
       donutMinimumValue,
       donutMaximumValue,
-      donutAngle, -1, hourData.cold.maxs, hourData.cold.mins) 
+      donutAngle, 1, hourData.cold.maxs, hourData.cold.mins) 
     let second_half = svg.append("svg:polygon")
       .attr("fill", "blue")
+      .attr("opacity", 0.5)
     //.attr("stroke", "black")
       .attr("points", points);
 
@@ -274,11 +280,13 @@ function createMap(locs, data_counts, temp_data, callback){
         var s = d3.select(this);
 
         let start = {d: 1, m: 7, y: 2013, h: 0};
-        let end =   {d: 31, m: 7, y: 2013, h: 0};
+        let end =   {d: 1, m: 10, y: 2016, h: 0};
 
         const sid = parseInt(d["Sensor ID"]);
 
-        var hourData = prepareDonutData(data_counts[sid], temp_data, start, end)
+        console.log("sid:", sid)
+
+        var hourData = prepareDonutData(data_counts[sid - 1], temp_data, start, end)
 
         donuts[i].svgs = createDonut(+s.attr("cx"), +s.attr("cy"), hourData);
     })
