@@ -1,5 +1,8 @@
 "use strict";
 
+/// total days: 1461
+/// invalid: -5555
+
 module.exports = {
     readData: readData
 }

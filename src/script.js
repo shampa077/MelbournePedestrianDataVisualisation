@@ -10,6 +10,8 @@ const simpleCircle = Donut.simpleCircle;
 
 var global_hourly_data;
 
+var donuts = {};
+
 
 Data.readData((data_locs, data_counts) => {
 
@@ -41,7 +43,7 @@ Data.readData((data_locs, data_counts) => {
   createMap(data_locs, function(){});
   prepareDonutData(data[1]);
 
-  // global_hourly_data = prepareDonutData(data[1]);
+  global_hourly_data = prepareDonutData(data[1]);
 
   /// TODO: use data to create maxs and mins for 
 
@@ -131,29 +133,32 @@ function createMap(locs, callback){
 
   locs.map( function(d){ var newPoint = map.latLngToLayerPoint( [d.Latitude, d.Longitude] ); d["lpoints"] = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )
 
-
   g.selectAll("circle").data( locs ).enter().append("circle")
     .attr("cx", function(d){ return d.lpoints.x } )
     .attr("cy", function(d){ return d.lpoints.y } )
     .attr("r", 10 )
     .style("fill", "red")
     .on("mouseover", function(d, i) {
-        
-        var s = d3.select(this);
-        var marker = [];
 
-        //this will need to be replaced to get the data from this data point
-        var maxs = [40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 90, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50];
-        var mins = [0, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20];
-        // var hourData = {maxs: maxs, mins: mins};
+        if (donuts[i] === undefined) { donuts[i] = {}}
+        if (donuts[i].shown === true) return;
+        
+        donuts[i].shown = true;
+        var s = d3.select(this);
+
         var hourData = global_hourly_data;
 
-        let svgs = createDonut(+s.attr("cx"), +s.attr("cy"), hourData);
-
-        svg.selectAll("polygon").on("mouseout", function(d, i) {
-            svgs[0].remove();
-            svgs[1].remove();
-        });
+        donuts[i].svgs = createDonut(+s.attr("cx"), +s.attr("cy"), hourData);
+    })
+    .on("click", (d, i) => {
+      donuts[i].keep = !donuts[i].keep;
+    })
+    .on("mouseout", (d, i) => {
+      if (donuts[i].shown && !donuts[i].keep) {
+        donuts[i].shown = false;
+        donuts[i].svgs[0].remove();
+        donuts[i].svgs[1].remove();
+      }
     })
 	
 	callback();
