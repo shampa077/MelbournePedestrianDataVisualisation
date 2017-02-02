@@ -12,6 +12,7 @@ const _ = require("lodash");
 const moment = require("moment");
 
 var global_hourly_data;
+var global_locs;
 
 var donuts = {};
 
@@ -115,7 +116,7 @@ Data.readData((data_locs, data_counts, data_temp) => {
   // data_counts = transform_count_data(data_counts);
 
   data_temp = process_temp_data(data_temp);
-
+	global_locs = data_locs;
   createMap(data_locs, data_counts, data_temp, () => {});
 
   /// TODO: use data to create maxs and mins for 
@@ -306,7 +307,7 @@ function createMap(locs, data_counts, temp_data, callback){
 		
 	})
     .on("mouseover", function(d, i) {
-
+		console.log(d);
         if (donuts[i] === undefined) { donuts[i] = {}}
         if (donuts[i].shown === true) return;
         
@@ -358,3 +359,41 @@ function createMap(locs, data_counts, temp_data, callback){
 	
 	callback();
 }
+
+
+
+
+var dateInput = document.getElementById("mydate");
+var timeInput = document.getElementById("mytime");
+var slider = document.getElementById("myslider");
+
+dateInput.addEventListener("click", function(){
+	updateSensors();
+});
+
+function updateSensors(){
+	var tmpg = d3.select("#mapg");
+	tmpg.selectAll("circle").data(global_locs).transition()
+                        .duration(500).attr("r", function(d,i){
+							
+							var selectedDateText = document.getElementById("mydate").value;
+							var selectedDate = new Date(selectedDateText);
+							var day = selectedDate.getDate();
+							var month = selectedDate.getMonth()+1;
+							var year = selectedDate.getFullYear();
+							var date_idx = day+"-"+month+"-"+year;
+							var selectedTime = document.getElementById("mytime").value;
+							var time_idx = parseInt(selectedTime);
+							var radius;
+							
+							var sensor_idx = parseInt(d["Sensor ID"]);
+							if (data_counts[sensor_idx-1] == null) radius = 0;
+							else if (data_counts[sensor_idx-1][date_idx] == null) radius= 0;
+							else radius= data_counts[sensor_idx-1][date_idx][time_idx] / 200;
+		
+							return radius;
+							
+	});
+}
+
+//transport_select.setAttribute("onchange", function(){toggleSelect(transport_select_id);});
