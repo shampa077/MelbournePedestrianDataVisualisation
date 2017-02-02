@@ -1,10 +1,17 @@
-const dateToIndexMap = require('./dateToIndexMapping');
+const dateToIndexMap = require('./dateToIndexMapping').dateToIndexMap;
+const indexToDateMap = require('./dateToIndexMapping').indexToDateMap;
 
 module.exports = {
-  dateToIndex: function(d, m, y) {
+  dateToIndex: function(d, m, y) { /// 1, 1, 2013 -> 0
     let date_str = d + '-' + m + '-' + y;
     return dateToIndexMap[date_str];
+  },
+
+  indexToDate: function(index) {
+    return indexToDateMap[index];
   }
+
+
 }
 
 /// 1st of Jan 2013
