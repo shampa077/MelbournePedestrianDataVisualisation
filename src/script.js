@@ -259,7 +259,9 @@ function createMap(locs, data_counts, temp_data, callback){
 	L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
 
 	var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
-		.setView([-37.8108798759503,144.960010438559], 14.3);
+		.setView([-37.8108798759503,144.960010438559], 14);
+		
+		//map.zoom = 140;
 
 		map.getPane('tilePane').style.opacity = 0.4;
 		
