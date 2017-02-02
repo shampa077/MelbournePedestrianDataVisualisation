@@ -22,18 +22,21 @@ function readData(cb) {
   var data_temp;
 
   var p1 = new Promise((resolve, reject) => {
+    console.log(path_locations, " loaded");
     d3.csv(path_locations, (data) => resolve(data))
   })
 
   p1.then((data) => { data_locations = data });
 
   var p2 = new Promise((resolve, reject) => {
+    console.log(path_counts, " loaded");
     d3.json(path_counts, (data) => resolve(data))
   })
 
   p2.then((data) => { data_counts = data });
 
   var p3 = new Promise((resolve, reject) => {
+    console.log(path_temperature, " loaded");
     d3.csv(path_temperature, (data) => resolve(data));
   })
 

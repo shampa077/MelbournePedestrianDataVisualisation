@@ -145,6 +145,7 @@ function prepareDonutData(daily_counts, data_temp, tp1, tp2) {
     let d = m_cur.date()
     let m = m_cur.month()
     let y = m_cur.year()
+    const day_of_week = m_cur.day();
     m_cur = m_cur.add(1, 'day');
 
     let date_str = d + "-" + m + "-" + y;
@@ -156,7 +157,12 @@ function prepareDonutData(daily_counts, data_temp, tp1, tp2) {
 
     if (counts === undefined) continue;
 
-    if (data_temp[date_str] === 0) {
+    const mode = document.getElementById("mode").value;
+
+    const cold_day = (data_temp[date_str] === 0);
+    const is_weekend = (day_of_week == 1 || day_of_week == 2);
+
+    if ((cold_day && mode == "temp") || (!is_weekend && mode == "weekday")) {
 
       for (let hour = 0; hour < 24; hour++) {
         daily_per_hour_cold[hour].push(counts[hour]);
