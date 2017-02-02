@@ -368,10 +368,25 @@ var timeInput = document.getElementById("mytime");
 var slider = document.getElementById("myslider");
 
 dateInput.addEventListener("click", function(){
+	clearTitle();
 	updateSensors();
 });
 
 timeInput.addEventListener("click", function(){
+	updateSensors();
+});
+
+function clearTitle(){
+	document.getElementById("mytitle").innerHTML = "Melbourne Pedestrian Count";
+}
+
+var incident = document.getElementById("incident");
+var incidents = [{"name":"Christmas 2015","date":"2015-12-25"},{"name":"State Elections 2014", "date":"2014-11-29"}, {"name":"Federal Elections 2013", "date":"2013-09-07"}, {"name":"Christmas 2014","date":"2014-12-25"}, {"name":"Lunar New Year 2013","date":"2013-02-10"}];
+
+incident.addEventListener("click", function(){
+	var ri = Math.floor((Math.random() * incidents.length) + 0);
+	document.getElementById("mytitle").innerHTML = "Melbourne Pedestrian Count - "+incidents[ri].name;//.text(incidents[ri].name).attr("x","50%").attr("y",10);
+	dateInput.value = incidents[ri].date;
 	updateSensors();
 });
 
