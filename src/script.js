@@ -20,7 +20,7 @@ Data.readData((data_locs, data_counts) => {
   })
 
   let data = {};
-  
+
   data_counts.forEach((d) => {
 
     const sid = d.Sensor_ID;
@@ -101,54 +101,47 @@ function createDonut(cx, cy, hourData) {
 
 }
 
+
   L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
   var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
     .setView([-37.8148798759503,144.965210438559], 15);
-  
+
   map.touchZoom.disable();
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.disable();
   map.boxZoom.disable();
   map.keyboard.disable();
   map.dragging.disable();
-  
+
   var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("width", map._size.x).attr("height", map._size.y),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
 
   var data = [
     { "coords" : [ -37.815145 , 144.966777]},
     { "coords" : [ -37.811123 , 144.962733]}
   ].map( function(d){ var newPoint = map.latLngToLayerPoint( d.coords ); d.coords = { 'x' : newPoint.x, 'y' : newPoint.y }; return d; } )
-  
+
 
   g.selectAll("circle").data( data ).enter().append("circle")
     .attr("cx", function(d){ console.log(d); return d.coords.x } )
     .attr("cy", function(d){ return d.coords.y } )
-    .attr("r", 20 )
+    .attr("r", 10 )
+    .style("fill", "red")
     .on("mouseover", function(d, i) {
         
-      alert("Sensor hover, show donut!");
+        var s = d3.select(this);
+        var marker = [];
 
-      var s = d3.select(this);
-      var marker = [];
+        //this will need to be replaced to get the data from this data point
+        var maxs = [40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 90, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50];
+        var mins = [0, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20];
+        var hourData = {maxs: maxs, mins: mins};
 
-      //this will need to be replaced to get the data from this data point
-      var maxs = [40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 90, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50];
-      var mins = [0, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20];
-      var hourData = {maxs: maxs, mins: mins};
+        let svgs = createDonut(+s.attr("cx"), +s.attr("cy"), hourData);
 
-      let svgs = createDonut(+s.attr("cx"), +s.attr("cy"), hourData);
-
-      svg.selectAll("polygon").on("mouseout", function(d, i) {
-          svgs[0].remove();
-          svgs[1].remove();
-      });
+        svg.selectAll("polygon").on("mouseout", function(d, i) {
+            svgs[0].remove();
+            svgs[1].remove();
+        });
     })
-    .style("fill", "blue");
-
-
-//need to remove this hardcoded donut, but for some reason the 'display on hover' donut on the map sensor locations is no longer working???
-    var maxs = [40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 90, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50];
-    var mins = [0, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20];
-    var hourData = {maxs: maxs, mins: mins};
-    let svgs = createDonut(200, 200, hourData);
