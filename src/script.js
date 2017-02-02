@@ -3,6 +3,7 @@
 const Donut = require("./donut");
 const Data = require("./data");
 
+const dateToIndex = require("./dateToIndex").dateToIndex;
 const jaggedDonut = Donut.jaggedDonut;
 const simpleCircle = Donut.simpleCircle;
 
