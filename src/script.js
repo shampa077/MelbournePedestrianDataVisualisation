@@ -8,6 +8,7 @@ const dateToIndex = require("./dateToIndex").dateToIndex;
 const jaggedDonut = Donut.jaggedDonut;
 const simpleCircle = Donut.simpleCircle;
 
+var global_hourly_data;
 
 
 Data.readData((data_locs, data_counts) => {
@@ -40,6 +41,8 @@ Data.readData((data_locs, data_counts) => {
   createMap(data_locs, function(){});
   prepareDonutData(data[1]);
 
+  // global_hourly_data = prepareDonutData(data[1]);
+
   /// TODO: use data to create maxs and mins for 
 
 });
@@ -68,6 +71,8 @@ function prepareDonutData(data) {
     result.mins.push(min);
     result.maxs.push(max);
   }
+
+  return result;
 
   // createDonut(result);
 
@@ -107,9 +112,8 @@ function createDonut(cx, cy, hourData) {
 
 }
 
-  
-  
-  function createMap(locs, callback){
+
+function createMap(locs, callback){
 	L.mapbox.accessToken = 'pk.eyJ1IjoidmFoYW4iLCJhIjoiY2luaWhyaDBxMHdydHUybTMzanViNzJpNCJ9.B_ndOs4dnU_XghOU9xfnSg';
 
 	var map = L.mapbox.map('map', 'mapbox.streets',{ zoomControl:false, scrollWheelZoom :false })
@@ -141,7 +145,8 @@ function createDonut(cx, cy, hourData) {
         //this will need to be replaced to get the data from this data point
         var maxs = [40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 90, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50, 40, 50];
         var mins = [0, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20, 10, 20];
-        var hourData = {maxs: maxs, mins: mins};
+        // var hourData = {maxs: maxs, mins: mins};
+        var hourData = global_hourly_data;
 
         let svgs = createDonut(+s.attr("cx"), +s.attr("cy"), hourData);
 
