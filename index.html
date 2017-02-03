@@ -32,7 +32,24 @@
 </div>
 
 <div style="margin-top:20px">
-	<img src="images/lightning.png" id="incident" width=40/>
+	<img src="images/dino.png" id="incident" width=80 style="cursor:pointer"/> <!--onmouseover="setImg('lightning')" onmouseout="setImg('dino')" o/>-->
+	<!--
+	<script>
+	function setImg(img){
+	
+	var myimg = document.getElementById("incident");
+	if(img == "dino") {
+	myimg.src = "images/dino.png";
+	myimg.width = 80;
+	}
+	
+	else if(img == "lightning") {
+	myimg.src = "images/lightning.png";
+	myimg.width = 40;
+	}
+	}
+	</script>
+	-->
 	
 	</div>
 <div id="map"></div>
