@@ -229,7 +229,7 @@ function createDonut(cx, cy, hourData) {
       donutMaximumRadius,
       donutMinimumValue,
       donutMaximumValue,
-      donutAngle, 1, hourData.hot.maxs, hourData.hot.mins) 
+      donutAngle, -1, hourData.hot.maxs, hourData.hot.mins) 
     let first_half = svg.append("svg:polygon")
       .attr("fill", "red")
       .attr("opacity", 0.5)
@@ -243,7 +243,7 @@ function createDonut(cx, cy, hourData) {
       donutMaximumRadius,
       donutMinimumValue,
       donutMaximumValue,
-      donutAngle, 1, hourData.cold.maxs, hourData.cold.mins) 
+      donutAngle, -1, hourData.cold.maxs, hourData.cold.mins) 
     let second_half = svg.append("svg:polygon")
       .attr("fill", "blue")
       .attr("opacity", 0.5)
