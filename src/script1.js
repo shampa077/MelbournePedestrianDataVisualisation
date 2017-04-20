@@ -10,13 +10,14 @@ const path_temperature = "data/TempData2013-2016.csv"
 
 console.log(path_locations);
 
- d3.csv(path_locations,function (data){
+const Data= d3.csv(path_locations,function (data){
      
-     for (var i in data)
-         console.log(data[i]);
+     //for (var i in data)
+       //  console.log(data[i]);
+    return data;
  });
 
-
+console.log(Data[2]);
 
 /*
 const Donut = require("./donut");
