@@ -1,6 +1,6 @@
 'use strict';
 
-const path_locations = "data/Pedestrian_sensor_locations.csv";
+      const path_locations = "data/Pedestrian_sensor_locations.csv";
 // const path_counts = "data/Pedestrian_volume__updated_monthly_.csv";
 // const path_counts = "data/sample_data.csv";
 // const path_counts = "data/CountData2013-2016.csv";
@@ -12,9 +12,10 @@ console.log(path_locations);
 
  d3.csv(path_locations,function (data){
      
-     for ( i in data)
+     for (var i in data)
          console.log(data[i]);
  });
+
 
 
 /*
