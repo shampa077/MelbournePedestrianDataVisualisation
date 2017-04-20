@@ -9,20 +9,61 @@ const path_counts = "data/pre-processed.json";
 const path_temperature = "data/TempData2013-2016.csv"
 
 console.log(path_locations);
-var getData=[];
+var getLocData=[];
 
  d3.csv(path_locations,function (data){
      
      for (var i in data)
       {
-            console.log(i);
-            getData.push(data[i]);
+            //console.log(i);
+            getLocData.push(data[i]);
       }
      //data is assigned
  });
 
-console.log("data");
-console.log(getData[0]);
+console.log("location data loading done");
+
+
+
+console.log(path_counts);
+var getCountData=[];
+
+ d3.json(path_counts,function (data){
+     
+     for (var i in data)
+      {
+          
+            getCountData.push(data[i]);
+      }
+     //data is assigned
+ });
+
+console.log("count data loading done");
+
+
+console.log(path_temperature);
+var getTempData=[];
+
+ d3.json(path_temperature,function (data){
+     
+     for (var i in data)
+      {
+          
+            getTempData.push(data[i]);
+      }
+     //data is assigned
+ });
+
+console.log("temp data loading done");
+
+
+
+
+
+
+//console.log(getData[0]);
+
+
 
 /*
 const Donut = require("./donut");
