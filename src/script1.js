@@ -9,12 +9,13 @@ const path_counts = "data/pre-processed.json";
 const path_temperature = "data/TempData2013-2016.csv"
 
 console.log(path_locations);
+const Data;
 
-const Data= d3.csv(path_locations,function (data){
+ d3.csv(path_locations,function (data){
      
      //for (var i in data)
        //  console.log(data[i]);
-    return data;
+    Data=data;
  });
 
 console.log("data");
