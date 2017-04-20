@@ -9,18 +9,18 @@ const path_counts = "data/pre-processed.json";
 const path_temperature = "data/TempData2013-2016.csv"
 
 console.log(path_locations);
-const Data=[];
+var getData=[];
 
  d3.csv(path_locations,function (data){
      
      //for (var i in data)
        //  console.log(data[i]);
-    Data=data;
+    getData=data;
      //data is assigned
  });
-
+const dataLoc=getData;
 console.log("data");
-console.log(Data[2]);
+console.log(dataLoc[2]);
 
 /*
 const Donut = require("./donut");
