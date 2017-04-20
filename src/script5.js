@@ -57,24 +57,100 @@ var getTempData=[];
 console.log("temp data loading done");
 
 
+var today = new Date();
+var dateInput = document.getElementById("mydate");
+var timeInput = document.getElementById("mytime");
+
+var mystartdate = "2013-01-01";
+
+dateInput.value = mystartdate;
+
+
+const dateToIndex= function(d, m, y) { /// 1, 1, 2013 -> 0
+    let date_str = d + '-' + m + '-' + y;
+    return dateToIndexMap[date_str];
+  };
+
+  const indexToDate=function(index) {
+    return indexToDateMap[index];
+  };
+
+
+
+/// 1st of Jan 2013
+const StartYear = 2013;
+const StartMon  = 1;
+const StartDay  = 1;
+
+// 30th Nov 2016
+const EndYear = 2016; 
+const EndMon =  12;
+const EndDay =  30;
+
+const datyInMonthRatherThanFeb = [
+  31, // Jan
+  NaN,
+  31, // Mar
+  30, // Apr
+  31, // May
+  30, // Jun
+  31, // Jly
+  31, // Aug
+  30, // Sep
+  31, // Oct
+  30, // Nov
+  31  // Dec
+];
+
+function daysInYear(year) {
+  return (year % 4 === 0) ? 366 : 365;
+}
+
+function daysInMonth(mon, year) {
+  
+  /// Special case for Feb
+  if (mon === 2) {
+    if (year % 4 === 0) { return 29 } else { return 28 }
+  }
+
+  return datyInMonthRatherThanFeb[mon - 1];
+}
+
+
+function dateToIndex(day, mon, year) {
+
+  let days = 0;
+
+  for (let y = StartYear; y < year; y++) {
+    days += daysInYear(y);
+  }
+
+  for (let m = StartMon; m < mon; m++) {
+    days += daysInMonth(m, year);
+  }
+
+  days += day;
+
+  return days - 1;
+}
 
 
 
 
-//console.log(getData[0]);
-
-
-
-/*
-const Donut = require("./donut");
-//console.log(Data);
 
 
 
 
-const VDateTime = require("./datetime");
 
-const dateToIndex = require("./dateToIndex").dateToIndex;
+
+
+
+
+
+
+
+
+
 const jaggedDonut = Donut.jaggedDonut;
 const simpleCircle = Donut.simpleCircle;
 
