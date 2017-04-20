@@ -1,6 +1,6 @@
 'use strict';
 
-      const path_locations = "data/Pedestrian_sensor_locations.csv";
+const path_locations = "data/Pedestrian_sensor_locations.csv";
 // const path_counts = "data/Pedestrian_volume__updated_monthly_.csv";
 // const path_counts = "data/sample_data.csv";
 // const path_counts = "data/CountData2013-2016.csv";
