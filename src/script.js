@@ -1,7 +1,26 @@
 'use strict';
 
+const path_locations = "data/Pedestrian_sensor_locations.csv";
+// const path_counts = "data/Pedestrian_volume__updated_monthly_.csv";
+// const path_counts = "data/sample_data.csv";
+// const path_counts = "data/CountData2013-2016.csv";
+const path_counts = "data/pre-processed.json";
+
+const path_temperature = "data/TempData2013-2016.csv"
+
+ const Data=d3.csv(path_locations,function (data){
+     
+     return data[0];
+ });
+console.log(Data);
+
+/*
 const Donut = require("./donut");
-const Data = require("./data");
+//console.log(Data);
+
+
+
+
 const VDateTime = require("./datetime");
 
 const dateToIndex = require("./dateToIndex").dateToIndex;
@@ -422,3 +441,4 @@ function updateSensors(){
 }
 
 //transport_select.setAttribute("onchange", function(){toggleSelect(transport_select_id);});
+*/
