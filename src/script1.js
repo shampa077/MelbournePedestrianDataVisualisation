@@ -17,6 +17,7 @@ const Data= d3.csv(path_locations,function (data){
     return data;
  });
 
+console.log("data");
 console.log(Data[2]);
 
 /*
