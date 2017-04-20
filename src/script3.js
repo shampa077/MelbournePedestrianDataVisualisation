@@ -1,10 +1,10 @@
 'use strict';
 
 const path_locations = "data/Pedestrian_sensor_locations.csv";
-// const path_counts = "data/Pedestrian_volume__updated_monthly_.csv";
+ const path_counts = "data/Pedestrian_volume__updated_monthly_.csv";
 // const path_counts = "data/sample_data.csv";
 // const path_counts = "data/CountData2013-2016.csv";
-const path_counts = "data/pre-processed.json";
+//const path_counts = "data/pre-processed.json";
 
 const path_temperature = "data/TempData2013-2016.csv"
 
@@ -28,7 +28,7 @@ console.log("location data loading done");
 console.log(path_counts);
 var getCountData=[];
 
- d3.json(path_counts,function (data){
+ d3.csv(path_counts,function (data){
      
      for (var i in data)
       {
@@ -44,7 +44,7 @@ console.log("count data loading done");
 console.log(path_temperature);
 var getTempData=[];
 
- d3.json(path_temperature,function (data){
+ d3.csv(path_temperature,function (data){
      
      for (var i in data)
       {
