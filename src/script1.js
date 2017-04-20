@@ -16,6 +16,7 @@ const Data;
      //for (var i in data)
        //  console.log(data[i]);
     Data=data;
+     //data is assigned
  });
 
 console.log("data");
