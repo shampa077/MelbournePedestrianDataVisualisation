@@ -13,14 +13,16 @@ var getData=[];
 
  d3.csv(path_locations,function (data){
      
-     //for (var i in data)
-       //  console.log(data[i]);
-    getData=data;
+     for (var i in data)
+      {
+            console.log(i);
+            getData.push(data[i]);
+      }
      //data is assigned
  });
-const dataLoc=getData;
+
 console.log("data");
-console.log(dataLoc[2]);
+console.log(getData[0]);
 
 /*
 const Donut = require("./donut");

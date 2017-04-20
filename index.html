@@ -58,33 +58,8 @@
 	<!--<input id="myslider" type="range" style="width:800px"  min="0" max="100" onchange="sliderChanged(this)" />-->
 </div>
     <svg class="canvas" width="960px" height="600px"></svg>
-<!--    <script src="src/script2.js"> </script>-->
-    <script>
-    
-    const path_locations = "data/Pedestrian_sensor_locations.csv";
-// const path_counts = "data/Pedestrian_volume__updated_monthly_.csv";
-// const path_counts = "data/sample_data.csv";
-// const path_counts = "data/CountData2013-2016.csv";
-const path_counts = "data/pre-processed.json";
-
-const path_temperature = "data/TempData2013-2016.csv"
-
-console.log(path_locations);
-var getData=[];
-
- d3.csv(path_locations,function (data){
-     
-     for (var i in data)
-      {
-            console.log(i);
-            getData.push(data[i]);
-      }
-     //data is assigned
- });
-
-console.log("data");
-console.log(getData[0]);
-        </script>
+   <script src="src/script2.js"> </script>
+  
 </body>
 </html>
 
