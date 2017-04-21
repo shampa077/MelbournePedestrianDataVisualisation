@@ -141,10 +141,10 @@ function dateToIndex(day, mon, year) {
      for (let d = StartDay; d <= daysInMonth(m, y); d++) {
        let index = dateToIndex(d, m, y) * HOURS_IN_DAY;
 
-       /*if (prev + 24 !== index) 
+       if (prev + 24 !== index) 
        { 
            console.log("something is wrong", y, m, d);
-       }*/
+       }
 
        let date_str = d + '-' + m + '-' + y;
 
@@ -160,7 +160,7 @@ function indexToDate(index) {
   }
 
 console.log(dateToIndex(1,1,2013));
-console.log(indexToDate(5));
+console.log(indexToDate(dateToIndex(14,11,2013)));
 /*
 
 
