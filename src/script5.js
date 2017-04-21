@@ -66,14 +66,14 @@ var mystartdate = "2013-01-01";
 dateInput.value = mystartdate;
 
 
-const dateToIndex= function(d, m, y) { /// 1, 1, 2013 -> 0
+const dateVale={ dateToIndex: function(d, m, y) { /// 1, 1, 2013 -> 0
     let date_str = d + '-' + m + '-' + y;
     return dateToIndexMap[date_str];
-  };
+  },
 
-  const indexToDate=function(index) {
+  indexToDate: function(index) {
     return indexToDateMap[index];
-  };
+  }};
 
 
 
