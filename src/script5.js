@@ -66,14 +66,7 @@ var mystartdate = "2013-01-01";
 dateInput.value = mystartdate;
 
 
-const dateVale={ dateToIndex: function(d, m, y) { /// 1, 1, 2013 -> 0
-    let date_str = d + '-' + m + '-' + y;
-    return dateToIndexMap[date_str];
-  },
 
-  indexToDate: function(index) {
-    return indexToDateMap[index];
-  }};
 
 
 
@@ -158,7 +151,14 @@ function dateToIndex(day, mon, year) {
      }
    }
  }
- console.log(JSON.stringify(result));
+
+const dateVale={ dateToIndex: dateToIndex(day, mon, year),
+
+  indexToDate: function(index) {
+    return indexToDateMap[index];
+  }};
+
+console.log(dateValue.dateToIndex(1,1,2013));
 /*
 
 
