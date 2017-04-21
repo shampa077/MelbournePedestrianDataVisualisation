@@ -134,6 +134,32 @@ function dateToIndex(day, mon, year) {
   return days - 1;
 }
 
+ let prev = -1;
+
+ console.log(dateToIndex(31,12,2013))
+
+ let result = {};
+ let indexToDateMap = {}
+
+ const HOURS_IN_DAY = 24;
+
+ for (let y = StartYear; y <= EndYear; y++) {
+   for (let m = StartMon; m <= EndMon; m++) {
+     for (let d = StartDay; d <= daysInMonth(m, y); d++) {
+       let index = dateToIndex(d, m, y) * HOURS_IN_DAY;
+
+       if (prev + 24 !== index) { console.log("something is wrong", y, m, d); }
+
+       let date_str = d + '-' + m + '-' + y;
+
+       indexToDateMap[index] = {day: d, month: m, year: y};
+
+       prev = index;
+     }
+   }
+ }
+ console.log(JSON.stringify(result));
+/*
 
 
 
